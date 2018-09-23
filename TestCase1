@@ -1,0 +1,43 @@
+const Auction = artifacts.require('./Auction.sol')
+const assert = require('assert')
+
+let contractInstance
+
+
+contract('Auction', (accounts) =>{
+    const auctioneer = accounts[0];
+    
+    const notary1 = accounts[1];
+    const notary2 = accounts[2];
+    
+    const bidder1 = accounts[3];
+    const bidder2 = accounts[4];
+    beforeEach(async() =>{  
+        contractInstance = await Auction.deployed();
+    })
+    
+    it('CreateAuction', async() =>{
+        await contractInstance.createAuction(19,[1,2,3,4],{from: auctioneer });
+    })
+    
+    it('NotaryRegister', async() =>{
+        await contractInstance.registerNotary({from: notary1 });
+        await contractInstance.registerNotary({from: notary2 });
+
+    })
+    
+    
+    it('Multiple Bidder Registration', async() =>{
+        await contractInstance.registerBidder( [3,2],[[1,1],[2,1]], {from: bidder1});
+        await contractInstance.registerBidder( [2,1],[[2,1],[3,4]], {from: bidder2});
+        
+    })
+    
+    it('SortAndGetWinner', async() =>{
+        await contractInstance.sort( {from: auctioneer});
+        await contractInstance.getWinners({from: auctioneer});
+        
+    })
+        
+    // })
+})
